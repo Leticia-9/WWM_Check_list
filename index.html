@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>연운 일일/주간 체크리스트</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 14px 40px;
+      box-sizing: border-box;
+      background: #f4f4f7;
+      font-size: 16px;
+    }
+    h1 { font-size: 40px; margin: 14px 0 8px; }
+    .subtitle { font-size: 13px; color: #555; margin-bottom: 10px; }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .search {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .search input {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+    }
+    .search input:focus { border-color: #bbb; }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .chip {
+      border: 1px solid #ccc;
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .chip[aria-pressed="true"] {
+      background: #fff;
+      border-color: #999;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      font-weight: 600;
+    }
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #ccc;
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle input { transform: scale(1.1); }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      margin-bottom: 14px;
+    }
+    h2 { font-size: 18px; margin: 0 0 8px; display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+    .card-note { font-size: 12px; color: #777; margin: 6px 0 2px; }
+
+    .task-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+      gap: 12px;
+    }
+    .task-row:last-child { border-bottom: none; }
+
+    .task-label { display: flex; align-items: center; gap: 8px; }
+    .task-label input[type="checkbox"] { transform: scale(1.2); }
+    small { font-size: 12px; color: #777; }
+    button {
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      background: #fafafa;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button:hover { background: #f0f0f0; }
+
+    .section-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+      gap: 10px;
+    }
+    .time-info { font-size: 12px; color: #777; margin-top: 6px; }
+
+    /* 문파 전용 */
+    #daily-munpa-counter { font-size: 14px; text-align: right; line-height: 1.4; min-width: 150px; }
+    .munpa-actions { display: flex; gap: 6px; align-items: center; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      font-size: 11px;
+      color: #666;
+      background: #fafafa;
+    }
+    .right-tools { display:flex; gap: 8px; align-items:center; }
+    .muted { color: #777; font-size: 12px; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+
+<body>
+  <h1>연운 일일 / 주간 체크리스트</h1>
+  <div class="subtitle" id="reset-subtitle"></div>
+
+  <div class="topbar">
+    <div class="search">
+      <input id="searchInput" type="text" placeholder="검색: 예) 협경, 상점, 문파, 연회, 운송..." autocomplete="off" />
+      <button type="button" id="clearSearch">지우기</button>
+    </div>
+
+    <div class="filters">
+      <span class="muted">빈도</span>
+      <div class="chip" data-filter-group="freq" data-filter-value="all" aria-pressed="true">전체</div>
+      <div class="chip" data-filter-group="freq" data-filter-value="daily" aria-pressed="false">일일</div>
+      <div class="chip" data-filter-group="freq" data-filter-value="weekly" aria-pressed="false">주간</div>
+
+      <span class="muted" style="margin-left: 6px;">범위</span>
+      <div class="chip" data-filter-group="scope" data-filter-value="all" aria-pressed="true">전체</div>
+      <div class="chip" data-filter-group="scope" data-filter-value="solo" aria-pressed="false">솔로</div>
+      <div class="chip" data-filter-group="scope" data-filter-value="guild" aria-pressed="false">동맹</div>
+
+      <label class="toggle" style="margin-left:auto;">
+        <input type="checkbox" id="onlyTodo" />
+        미완료만
+      </label>
+    </div>
+  </div>
+
+  <!-- 솔로 일일 -->
+  <div class="card" data-card="solo-daily">
+    <h2>
+      <span>솔로 일일</span>
+      <span class="right-tools">
+        <span class="badge" id="munpa-weekly-badge" style="display:none;">문파 주간 캡</span>
+      </span>
+    </h2>
+    <div class="card-note">매일 06:00 기준 초기화를 가정합니다.</div>
+
+    <!-- 문파 - 강호호령 (카운터) -->
+    <div class="task-row"
+         id="munpa-row"
+         data-freq="daily"
+         data-scope="solo"
+         data-kind="counter"
+         data-search="문파 강호호령">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <strong>문파 - 강호호령</strong>
+        </div>
+        <small>+1 버튼 누적 · 일일 최대 6회 · 주간 최대 20회</small>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="munpa-actions">
+          <button type="button" id="munpa-plus">+1</button>
+          <button type="button" id="munpa-reset-today">오늘 0</button>
+        </div>
+        <div id="daily-munpa-counter"></div>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="거위 치료">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-goose">
+        거위 치료
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="조리돌림">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-jori">
+        조리돌림
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="복지 수련">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-welfare">
+        복지 수련
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="오금희">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-ogum">
+        오금희
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="홍로문회">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-hongro">
+        홍로문회
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="다인 진료">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-dain">
+        다인 진료
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="청천문 특훈">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-cheongcheon">
+        청천문 특훈
+      </label>
+    </div>
+
+    <div class="section-footer">
+      <span id="daily-last-reset"></span>
+      <button id="daily-manual-reset" type="button">솔로 일일 초기화</button>
+    </div>
+  </div>
+
+  <!-- 동맹 일일 -->
+  <div class="card" data-card="guild-daily">
+    <h2><span>동맹 일일</span></h2>
+    <div class="card-note">레티님 동맹 루틴에 맞춰 묶은 카드입니다.</div>
+
+    <div class="task-row" data-freq="daily" data-scope="guild" data-kind="check" data-search="협경 동맹 협경">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-guild-hyeopgyeong">
+        동맹 협경 참여
+      </label>
+      <small>가능하면 1~2회</small>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="guild" data-kind="check" data-search="연회 21시">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-guild-banquet">
+        동맹 연회 참석
+      </label>
+      <small>매일 21:00</small>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="guild" data-kind="check" data-search="기여 출석">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-guild-contrib">
+        동맹 기여/출석/도움
+      </label>
+      <small>짧게라도</small>
+    </div>
+
+    <div class="section-footer">
+      <span class="muted">동맹 일일은 “솔로 일일 초기화”에 함께 초기화됩니다.</span>
+    </div>
+  </div>
+
+  <!-- 솔로 주간 -->
+  <div class="card" data-card="solo-weekly">
+    <h2><span>솔로 주간</span></h2>
+    <div class="card-note">매주 월요일 06:00 기준 초기화를 가정합니다.</div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="상점 아이템 음의 선율 2개">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-shop-sound2">
+        상점 - 아이템 - 음의 선율 2개 구매
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="시즌상점 외관 교환 음의 선율 1개">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-season-sound1">
+        시즌상점 - 외관 교환 - 음의 선율 1개 구매
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="옥어패 2만 사용">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-oyuopae">
+        시즌상점 옥어패 2만개 사용
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="협경 일반">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-hyeopgyeong">
+        협경(일반) 주간 체크
+      </label>
+    </div>
+
+    <div class="section-footer">
+      <span id="weekly-last-reset"></span>
+      <button id="weekly-manual-reset" type="button">주간 모두 초기화</button>
+    </div>
+  </div>
+
+  <!-- 동맹 주간 -->
+  <div class="card" data-card="guild-weekly">
+    <h2><span>동맹 주간</span></h2>
+    <div class="card-note">주간 초기화되는 동맹 콘텐츠를 묶었습니다.</div>
+
+    <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="화물 운송 주둔지">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-guild-cargo">
+        동맹 주둔지 화물 운송
+      </label>
+      <small>주간 초기화</small>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="동맹 상점 주간 구매">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-guild-shop">
+        동맹 상점 주간 구매
+      </label>
+      <small>재료 우선</small>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="동맹 레이드 보스">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-guild-raid">
+        동맹 주간 레이드/보스
+      </label>
+      <small>가능한 주에</small>
+    </div>
+
+    <div class="section-footer">
+      <span class="muted">주간 초기화는 “주간 모두 초기화” 버튼을 사용합니다.</span>
+    </div>
+  </div>
+
+  <div class="time-info" id="now-time"></div>
+
+  <script>
+    const STORAGE_KEY = "yunyun-checklist-state-v4"; // v4와 호환 유지
+
+    // 리셋 상수(문구/로직 동기화)
+    const DAILY_RESET_HOUR = 6;
+    const DAILY_RESET_MINUTE = 0;
+    const WEEKLY_RESET_DAY = 1; // 월요일(0=일,1=월,...)
+
+    const filters = {
+      freq: "all",   // all | daily | weekly
+      scope: "all",  // all | solo | guild
+      onlyTodo: false,
+      query: ""
+    };
+
+    function pad2(n){ return String(n).padStart(2, "0"); }
+
+    function formatDateTime(d) {
+      const y = d.getFullYear();
+      const m = pad2(d.getMonth() + 1);
+      const day = pad2(d.getDate());
+      const hh = pad2(d.getHours());
+      const mm = pad2(d.getMinutes());
+      return `${y}-${m}-${day} ${hh}:${mm}`;
+    }
+
+    function setSubtitle() {
+      const el = document.getElementById("reset-subtitle");
+      if (!el) return;
+      const dailyTxt = `${pad2(DAILY_RESET_HOUR)}:${pad2(DAILY_RESET_MINUTE)}`;
+      const weeklyTxt = `월요일 ${pad2(DAILY_RESET_HOUR)}:${pad2(DAILY_RESET_MINUTE)}`;
+      el.textContent = `일일: 매일 ${dailyTxt} 초기화 · 주간: ${weeklyTxt} 초기화 (로컬 저장)`;
+    }
+
+    function getDailyBoundary(now) {
+      const boundary = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        DAILY_RESET_HOUR, DAILY_RESET_MINUTE, 0, 0
+      );
+      if (now < boundary) boundary.setDate(boundary.getDate() - 1);
+      return boundary.getTime();
+    }
+
+    function getWeeklyBoundary(now) {
+      const boundary = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        DAILY_RESET_HOUR, DAILY_RESET_MINUTE, 0, 0
+      );
+      const day = boundary.getDay(); // 일:0 ~ 토:6
+      const diffFromTarget = (day - WEEKLY_RESET_DAY + 7) % 7;
+      boundary.setDate(boundary.getDate() - diffFromTarget);
+      if (now < boundary) boundary.setDate(boundary.getDate() - 7);
+      return boundary.getTime();
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error("load error", e);
+        return null;
+      }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function initStateIfNeeded() {
+      const now = new Date();
+      const dailyBoundary = getDailyBoundary(now);
+      const weeklyBoundary = getWeeklyBoundary(now);
+
+      let state = loadState();
+      if (!state) {
+        state = { daily: {}, weekly: {}, dailyBoundary, weeklyBoundary };
+        saveState(state);
+        return state;
+      }
+
+      // 일일 리셋
+      if (!state.dailyBoundary || state.dailyBoundary < dailyBoundary) {
+        state.daily = {};
+        state.dailyBoundary = dailyBoundary;
+      }
+
+      // 주간 리셋
+      if (!state.weeklyBoundary || state.weeklyBoundary < weeklyBoundary) {
+        state.weekly = {};
+        state.weeklyBoundary = weeklyBoundary;
+      }
+
+      saveState(state);
+      return state;
+    }
+
+    function isRowCompleted(rowEl) {
+      const kind = rowEl.getAttribute("data-kind");
+      if (kind === "check") {
+        const cb = rowEl.querySelector('input[type="checkbox"][data-task-id]');
+        return cb ? cb.checked : false;
+      }
+      if (kind === "counter") {
+        // 문파: 오늘 6/6이면 완료로 간주
+        const completed = rowEl.getAttribute("data-completed");
+        return completed === "true";
+      }
+      return false;
+    }
+
+    function applyFilters() {
+      const q = (filters.query || "").trim().toLowerCase();
+
+      document.querySelectorAll(".task-row[data-freq][data-scope]").forEach(row => {
+        const freq = row.getAttribute("data-freq");
+        const scope = row.getAttribute("data-scope");
+        const search = (row.getAttribute("data-search") || row.textContent || "").toLowerCase();
+
+        let visible = true;
+
+        if (filters.freq !== "all" && freq !== filters.freq) visible = false;
+        if (filters.scope !== "all" && scope !== filters.scope) visible = false;
+        if (q && !search.includes(q)) visible = false;
+
+        if (visible && filters.onlyTodo) {
+          if (isRowCompleted(row)) visible = false;
+        }
+
+        row.classList.toggle("hidden", !visible);
+      });
+
+      // 카드 자체 숨김(해당 카드 내 보이는 task-row가 하나도 없으면)
+      document.querySelectorAll(".card").forEach(card => {
+        const rows = card.querySelectorAll(".task-row[data-freq][data-scope]");
+        if (rows.length === 0) return;
+        const anyVisible = Array.from(rows).some(r => !r.classList.contains("hidden"));
+        card.classList.toggle("hidden", !anyVisible);
+      });
+    }
+
+    function updateMunpaUI(dailyCount, weeklyTotal) {
+      const counterEl = document.getElementById("daily-munpa-counter");
+      const badgeEl = document.getElementById("munpa-weekly-badge");
+      const munpaRow = document.getElementById("munpa-row");
+
+      const safeDaily = Math.max(0, Math.min(6, dailyCount || 0));
+      const safeWeekly = Math.max(0, Math.min(20, weeklyTotal || 0));
+
+      if (counterEl) {
+        counterEl.innerHTML =
+          `일일: ${safeDaily} / 6<br><small>주간: ${safeWeekly} / 20</small>`;
+      }
+
+      if (badgeEl) {
+        badgeEl.style.display = (safeWeekly >= 20) ? "inline-block" : "none";
+      }
+
+      if (munpaRow) {
+        // 오늘 6/6이면 완료 취급
+        munpaRow.setAttribute("data-completed", (safeDaily >= 6) ? "true" : "false");
+      }
+    }
+
+    function updateUIFromState(state) {
+      // 체크박스 반영
+      document.querySelectorAll('input[type="checkbox"][data-task-id]').forEach(el => {
+        const id = el.getAttribute('data-task-id');
+        const isWeekly = id.startsWith("weekly-");
+        const section = isWeekly ? state.weekly : state.daily;
+        el.checked = !!section[id];
+      });
+
+      // 문파 카운터 반영
+      const dailyCountRaw = state.daily["daily-munpa"];
+      const weeklyTotalRaw = state.weekly["weekly-munpa-total"];
+      const dailyCount = (typeof dailyCountRaw === "number" && dailyCountRaw >= 0) ? dailyCountRaw : 0;
+      const weeklyTotal = (typeof weeklyTotalRaw === "number" && weeklyTotalRaw >= 0) ? weeklyTotalRaw : 0;
+      updateMunpaUI(dailyCount, weeklyTotal);
+
+      // 리셋 라벨
+      const dailyLabel = document.getElementById("daily-last-reset");
+      const weeklyLabel = document.getElementById("weekly-last-reset");
+      if (dailyLabel && state.dailyBoundary) {
+        dailyLabel.textContent = "마지막 일일 리셋: " + formatDateTime(new Date(state.dailyBoundary));
+      }
+      if (weeklyLabel && state.weeklyBoundary) {
+        weeklyLabel.textContent = "마지막 주간 리셋: " + formatDateTime(new Date(state.weeklyBoundary));
+      }
+
+      // 필터 재적용
+      applyFilters();
+    }
+
+    function attachEvents(state) {
+      // 일반 체크박스
+      document.querySelectorAll('input[type="checkbox"][data-task-id]').forEach(el => {
+        el.addEventListener("change", () => {
+          const id = el.getAttribute('data-task-id');
+          const isWeekly = id.startsWith("weekly-");
+          const sectionName = isWeekly ? "weekly" : "daily";
+          state[sectionName][id] = el.checked;
+          saveState(state);
+          applyFilters();
+        });
+      });
+
+      // 문파 +1
+      const plusBtn = document.getElementById("munpa-plus");
+      if (plusBtn) {
+        plusBtn.addEventListener("click", () => {
+          let dailyCount = state.daily["daily-munpa"];
+          let weeklyTotal = state.weekly["weekly-munpa-total"];
+          if (typeof dailyCount !== "number" || dailyCount < 0) dailyCount = 0;
+          if (typeof weeklyTotal !== "number" || weeklyTotal < 0) weeklyTotal = 0;
+
+          if (weeklyTotal >= 20) {
+            updateMunpaUI(dailyCount, weeklyTotal);
+            applyFilters();
+            return;
+          }
+
+          if (dailyCount < 6) {
+            dailyCount += 1;
+            weeklyTotal += 1;
+          }
+          weeklyTotal = Math.min(20, weeklyTotal);
+
+          state.daily["daily-munpa"] = dailyCount;
+          state.weekly["weekly-munpa-total"] = weeklyTotal;
+          saveState(state);
+          updateMunpaUI(dailyCount, weeklyTotal);
+          applyFilters();
+        });
+      }
+
+      // 문파 오늘 0(오늘치 0으로, 주간도 오늘만큼 되돌림)
+      const resetTodayBtn = document.getElementById("munpa-reset-today");
+      if (resetTodayBtn) {
+        resetTodayBtn.addEventListener("click", () => {
+          let dailyCount = state.daily["daily-munpa"];
+          let weeklyTotal = state.weekly["weekly-munpa-total"];
+          if (typeof dailyCount !== "number" || dailyCount < 0) dailyCount = 0;
+          if (typeof weeklyTotal !== "number" || weeklyTotal < 0) weeklyTotal = 0;
+
+          weeklyTotal = Math.max(0, weeklyTotal - dailyCount);
+          dailyCount = 0;
+
+          state.daily["daily-munpa"] = dailyCount;
+          state.weekly["weekly-munpa-total"] = weeklyTotal;
+          saveState(state);
+          updateMunpaUI(dailyCount, weeklyTotal);
+          applyFilters();
+        });
+      }
+
+      // 솔로 일일 초기화(동맹 일일 포함: 일일 섹션 전체 초기화)
+      const dailyResetBtn = document.getElementById("daily-manual-reset");
+      if (dailyResetBtn) {
+        dailyResetBtn.addEventListener("click", () => {
+          state.daily = {};
+          state.dailyBoundary = getDailyBoundary(new Date());
+          saveState(state);
+          updateUIFromState(state);
+        });
+      }
+
+      // 주간 모두 초기화(솔로 주간 + 동맹 주간 포함)
+      const weeklyResetBtn = document.getElementById("weekly-manual-reset");
+      if (weeklyResetBtn) {
+        weeklyResetBtn.addEventListener("click", () => {
+          state.weekly = {};
+          state.weeklyBoundary = getWeeklyBoundary(new Date());
+          saveState(state);
+          updateUIFromState(state);
+        });
+      }
+
+      // 검색
+      const searchInput = document.getElementById("searchInput");
+      const clearSearch = document.getElementById("clearSearch");
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          filters.query = searchInput.value || "";
+          applyFilters();
+        });
+      }
+      if (clearSearch && searchInput) {
+        clearSearch.addEventListener("click", () => {
+          searchInput.value = "";
+          filters.query = "";
+          applyFilters();
+          searchInput.focus();
+        });
+      }
+
+      // 미완료만
+      const onlyTodo = document.getElementById("onlyTodo");
+      if (onlyTodo) {
+        onlyTodo.addEventListener("change", () => {
+          filters.onlyTodo = !!onlyTodo.checked;
+          applyFilters();
+        });
+      }
+
+      // 칩 필터
+      document.querySelectorAll(".chip[data-filter-group][data-filter-value]").forEach(chip => {
+        chip.addEventListener("click", () => {
+          const group = chip.getAttribute("data-filter-group");
+          const value = chip.getAttribute("data-filter-value");
+          filters[group] = value;
+
+          // 같은 그룹 칩 aria-pressed 업데이트
+          document.querySelectorAll(`.chip[data-filter-group="${group}"]`).forEach(c => {
+            c.setAttribute("aria-pressed", (c.getAttribute("data-filter-value") === value) ? "true" : "false");
+          });
+
+          applyFilters();
+        });
+      });
+    }
+
+    function updateNowTime() {
+      const el = document.getElementById("now-time");
+      if (!el) return;
+      const now = new Date();
+      el.textContent = "현재 시각 (로컬): " + formatDateTime(now);
+    }
+
+    (function main() {
+      setSubtitle();
+      const state = initStateIfNeeded();
+      updateUIFromState(state);
+      attachEvents(state);
+      updateNowTime();
+      setInterval(updateNowTime, 60 * 1000);
+    })();
+  </script>
+</body>
+</html>
