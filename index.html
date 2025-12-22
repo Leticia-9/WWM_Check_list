@@ -288,14 +288,7 @@
   <!-- 동맹 일일 -->
   <div class="card" data-card="guild-daily">
     <h2><span>동맹 일일</span></h2>
-
-    <div class="task-row" data-freq="daily" data-scope="guild" data-kind="check" data-search="협경 동맹 협경">
-      <label class="task-label">
-        <input type="checkbox" data-task-id="daily-guild-hyeopgyeong">
-        동맹 협경 참여
-      </label>
-      <small>가능하면 1~2회</small>
-    </div>
+    <div class="card-note">동맹 루틴용 카드입니다.</div>
 
     <div class="task-row" data-freq="daily" data-scope="guild" data-kind="check" data-search="연회 21시">
       <label class="task-label">
@@ -313,7 +306,7 @@
   <!-- 솔로 주간 -->
   <div class="card" data-card="solo-weekly">
     <h2><span>솔로 주간</span></h2>
-    <div class="card-note">매주 월요일 06:00 기준 초기화</div>
+    <div class="card-note">매주 월요일 06:00 기준 초기화를 가정합니다.</div>
 
     <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="상점 아이템 음의 선율 2개">
       <label class="task-label">
@@ -497,9 +490,16 @@
   <!-- 동맹 주간 -->
   <div class="card" data-card="guild-weekly">
     <h2><span>동맹 주간</span></h2>
-    <div class="card-note">주간 초기화되는 동맹 콘텐츠</div>
 
-    <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="화물 운송 주둔지">
+
+    <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="협경 동맹 협경">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-guild-hyeopgyeong">
+        동맹 협경 참여
+      </label>
+      <small>가능하면 1~2회</small>
+    </div>
+<div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="화물 운송 주둔지">
       <label class="task-label">
         <input type="checkbox" data-task-id="weekly-guild-cargo">
         동맹 주둔지 화물 운송(재료 납품)
