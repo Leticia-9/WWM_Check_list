@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>연운 일일/주간 체크리스트</title>
+  <title>연운 일일/주간/월간 체크리스트</title>
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -84,7 +84,14 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.06);
       margin-bottom: 14px;
     }
-    h2 { font-size: 18px; margin: 0 0 8px; display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+    h2 {
+      font-size: 18px;
+      margin: 0 0 8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
     .card-note { font-size: 12px; color: #777; margin: 6px 0 2px; }
 
     .task-row {
@@ -142,12 +149,12 @@
 </head>
 
 <body>
-  <h1>연운 일일 / 주간 체크리스트</h1>
+  <h1>연운 일일 / 주간 / 월간 체크리스트</h1>
   <div class="subtitle" id="reset-subtitle"></div>
 
   <div class="topbar">
     <div class="search">
-      <input id="searchInput" type="text" placeholder="검색: 예) 협경, 상점, 문파, 연회, 운송..." autocomplete="off" />
+      <input id="searchInput" type="text" placeholder="검색: 예) 협경, 상점, 문파, 연회, 운송, 검무장..." autocomplete="off" />
       <button type="button" id="clearSearch">지우기</button>
     </div>
 
@@ -156,6 +163,7 @@
       <div class="chip" data-filter-group="freq" data-filter-value="all" aria-pressed="true">전체</div>
       <div class="chip" data-filter-group="freq" data-filter-value="daily" aria-pressed="false">일일</div>
       <div class="chip" data-filter-group="freq" data-filter-value="weekly" aria-pressed="false">주간</div>
+      <div class="chip" data-filter-group="freq" data-filter-value="monthly" aria-pressed="false">월간</div>
 
       <span class="muted" style="margin-left: 6px;">범위</span>
       <div class="chip" data-filter-group="scope" data-filter-value="all" aria-pressed="true">전체</div>
@@ -177,7 +185,7 @@
         <span class="badge" id="munpa-weekly-badge" style="display:none;">문파 주간 캡</span>
       </span>
     </h2>
-    <div class="card-note">매일 06:00 기준 초기화를 가정합니다.</div>
+    <div class="card-note">매일 06:00 기준 초기화</div>
 
     <!-- 문파 - 강호호령 (카운터) -->
     <div class="task-row"
@@ -251,6 +259,26 @@
       </label>
     </div>
 
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="주요 자원 채집 비결자원">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="daily-resource">
+          주요 자원 채집
+        </label>
+        <small>목표: 특수 채집물 · 위치: 맵 &gt; 생물 분포</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="현상령 수행">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="daily-bounty">
+          현상령 수행
+        </label>
+        <small>목표: 일일 임무 · 위치: 강호행 &gt; 현상</small>
+      </div>
+    </div>
+
     <div class="section-footer">
       <span id="daily-last-reset"></span>
       <button id="daily-manual-reset" type="button">솔로 일일 초기화</button>
@@ -260,7 +288,7 @@
   <!-- 동맹 일일 -->
   <div class="card" data-card="guild-daily">
     <h2><span>동맹 일일</span></h2>
-    <div class="card-note">레티님 동맹 루틴에 맞춰 묶은 카드입니다.</div>
+    <div class="card-note">동맹 루틴용 카드입니다.</div>
 
     <div class="task-row" data-freq="daily" data-scope="guild" data-kind="check" data-search="협경 동맹 협경">
       <label class="task-label">
@@ -276,14 +304,6 @@
         동맹 연회 참석
       </label>
       <small>매일 21:00</small>
-    </div>
-
-    <div class="task-row" data-freq="daily" data-scope="guild" data-kind="check" data-search="기여 출석">
-      <label class="task-label">
-        <input type="checkbox" data-task-id="daily-guild-contrib">
-        동맹 기여/출석/도움
-      </label>
-      <small>짧게라도</small>
     </div>
 
     <div class="section-footer">
@@ -303,17 +323,17 @@
       </label>
     </div>
 
-    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="시즌상점 외관 교환 음의 선율 1개">
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="시즌 상점 외관 교환 음의 선율 1개">
       <label class="task-label">
         <input type="checkbox" data-task-id="weekly-season-sound1">
-        시즌상점 - 외관 교환 - 음의 선율 1개 구매
+        시즌 상점 - 외관 교환 - 음의 선율 1개 구매
       </label>
     </div>
 
     <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="옥어패 2만 사용">
       <label class="task-label">
         <input type="checkbox" data-task-id="weekly-oyuopae">
-        시즌상점 옥어패 2만개 사용
+        시즌 상점 - 옥어패 2만 개 사용
       </label>
     </div>
 
@@ -324,21 +344,166 @@
       </label>
     </div>
 
+    <!-- 추가: 단맥전 무역 -->
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="단맥전 무역">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-danmaek-trade">
+        단맥전 무역
+      </label>
+    </div>
+
     <div class="section-footer">
       <span id="weekly-last-reset"></span>
       <button id="weekly-manual-reset" type="button">주간 모두 초기화</button>
     </div>
   </div>
 
+  <!-- 솔로 월간 - 교환/상점 (월간 초기화) -->
+  <div class="card" data-card="solo-monthly-exchange">
+    <h2><span>솔로 월간 - 교환/상점</span></h2>
+    <div class="card-note">매월 1일 06:00 초기화</div>
+
+    <div class="task-row" data-freq="monthly" data-scope="solo" data-kind="check" data-search="공명 상점 음의 선율 교환 지화">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="monthly-gongmyeong-sound2">
+          공명 상점 - 음의 선율 교환 2개
+        </label>
+        <small>재화: 지화 24개 · 위치: 공명 &gt; 상점 &gt; 지화 상점 &gt; 음의 선율</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="monthly" data-scope="solo" data-kind="check" data-search="공명 상점 선율 할인권 교환 지화">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="monthly-gongmyeong-coupon1">
+          공명 상점 - 선율 할인권 교환 1개
+        </label>
+        <small>재화: 지화 15개 · 위치: 공명 &gt; 상점 &gt; 지화 상점 &gt; 선율 할인권</small>
+      </div>
+    </div>
+
+    <div class="section-footer">
+      <span id="monthly-last-reset"></span>
+      <button id="monthly-manual-reset" type="button">월간 모두 초기화</button>
+    </div>
+  </div>
+
+  <!-- 솔로 주간 - 교환/상점 -->
+  <div class="card" data-card="solo-weekly-exchange">
+    <h2><span>솔로 주간 - 교환/상점</span></h2>
+    <div class="card-note">주간(월요일 06:00) 기준 교환/상점 목록</div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="강호백진 음의 선율 장명옥">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-ganghobaejin-sound2">
+          강호백진 - 음의 선율 교환 2개
+        </label>
+        <small>재화: 장명옥 400개 · 위치: 상점 &gt; 아이템 &gt; 강호백진 &gt; 음의 선율</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="시즌 상점 심법 심득 옥어패">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-season-simbeop40">
+          시즌 상점 - 심법 심득 교환 40개
+        </label>
+        <small>재화: 옥어패 6000개 · 위치: 시즌 &gt; 시즌 상점 &gt; 전투양성 &gt; 심법 심득</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="시즌 상점 비결 돌파 지원상자 옥어패">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-season-bigeolbox10">
+          시즌 상점 - 비결 돌파 지원상자 교환 10개
+        </label>
+        <small>재화: 옥어패 5000개 · 위치: 시즌 &gt; 시즌 상점 &gt; 전투양성 &gt; 비결돌파 상자</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="단백전 상자 옥어패">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-season-proteinbox1">
+          시즌 상점 - 작은 단백전 상자 교환 1개
+        </label>
+        <small>재화: 옥어패 50개 · 위치: 시즌 &gt; 시즌 상점 &gt; 전투양성 &gt; 단백전 상자 · 비고: 2500 단백전</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="외관 상점 음의 선율 장명옥">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-appearance-sound1">
+          외관 상점 - 음의 선율 교환 1개
+        </label>
+        <small>재화: 장명옥 200 · 위치: 시즌 &gt; 시즌 상점 &gt; 외관 교환 &gt; 음의 선율</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="강호령 상점 비결 돌파 지원상자 강호령패">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-ganghoryeong-bigeolbox3">
+          강호령 상점 - 비결 돌파 지원상자 교환 3개
+        </label>
+        <small>재화: 강호령패 15개 · 위치: 강호령 &gt; 상점 &gt; 비결돌파 상자</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="장비 상점 장비 상자 옥어패">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-equipbox25">
+          장비 상자 교환 25개
+        </label>
+        <small>재화: 옥어패 2500개 · 위치: 시즌 &gt; 시즌 상점 &gt; 장비 보물함 · 비고: 레벨별</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="기술양성 기술 필기 옥어패">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-skill-notes500">
+          기술양성 - 기술 필기 교환 500개
+        </label>
+        <small>재화: 옥어패 2000개 · 위치: 시즌 &gt; 시즌 상점 &gt; 기술양성 &gt; 기술 필기</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="기술양성 문예 의술 선택 상자 옥어패">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-skill-choice15">
+          기술양성 - 문예/의술/선택 상자 각 15개
+        </label>
+        <small>재화: 옥어패 2250개 · 위치: 시즌 &gt; 시즌 상점 &gt; 기술양성 &gt; 선택</small>
+      </div>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="심법 심득 교체 서표">
+      <div>
+        <label class="task-label">
+          <input type="checkbox" data-task-id="weekly-simbeop-choice600">
+          심법 - 심법 선택 교환 600개
+        </label>
+        <small>재화: 서표 3000개 · 위치: 육성 &gt; 심법 &gt; 심득 교체</small>
+      </div>
+    </div>
+  </div>
+
   <!-- 동맹 주간 -->
   <div class="card" data-card="guild-weekly">
     <h2><span>동맹 주간</span></h2>
-    <div class="card-note">주간 초기화되는 동맹 콘텐츠를 묶었습니다.</div>
+    <div class="card-note">주간 초기화되는 동맹 콘텐츠</div>
 
     <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="화물 운송 주둔지">
       <label class="task-label">
         <input type="checkbox" data-task-id="weekly-guild-cargo">
-        동맹 주둔지 화물 운송
+        동맹 주둔지 화물 운송(재료 납품)
       </label>
       <small>주간 초기화</small>
     </div>
@@ -351,10 +516,10 @@
       <small>재료 우선</small>
     </div>
 
-    <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="동맹 레이드 보스">
+    <div class="task-row" data-freq="weekly" data-scope="guild" data-kind="check" data-search="검무장 동맹 주간">
       <label class="task-label">
         <input type="checkbox" data-task-id="weekly-guild-raid">
-        동맹 주간 레이드/보스
+        검무장
       </label>
       <small>가능한 주에</small>
     </div>
@@ -367,15 +532,16 @@
   <div class="time-info" id="now-time"></div>
 
   <script>
-    const STORAGE_KEY = "yunyun-checklist-state-v4"; // v4와 호환 유지
+    const STORAGE_KEY = "yunyun-checklist-state-v4"; // 기존 진행도 유지
 
-    // 리셋 상수(문구/로직 동기화)
+    // 리셋 상수
     const DAILY_RESET_HOUR = 6;
     const DAILY_RESET_MINUTE = 0;
     const WEEKLY_RESET_DAY = 1; // 월요일(0=일,1=월,...)
+    const MONTHLY_RESET_DAY_OF_MONTH = 1; // 매월 1일
 
     const filters = {
-      freq: "all",   // all | daily | weekly
+      freq: "all",   // all | daily | weekly | monthly
       scope: "all",  // all | solo | guild
       onlyTodo: false,
       query: ""
@@ -397,7 +563,8 @@
       if (!el) return;
       const dailyTxt = `${pad2(DAILY_RESET_HOUR)}:${pad2(DAILY_RESET_MINUTE)}`;
       const weeklyTxt = `월요일 ${pad2(DAILY_RESET_HOUR)}:${pad2(DAILY_RESET_MINUTE)}`;
-      el.textContent = `일일: 매일 ${dailyTxt} 초기화 · 주간: ${weeklyTxt} 초기화 (로컬 저장)`;
+      const monthlyTxt = `매월 ${MONTHLY_RESET_DAY_OF_MONTH}일 ${pad2(DAILY_RESET_HOUR)}:${pad2(DAILY_RESET_MINUTE)}`;
+      el.textContent = `일일: 매일 ${dailyTxt} 초기화 · 주간: ${weeklyTxt} 초기화 · 월간: ${monthlyTxt} 초기화 (로컬 저장)`;
     }
 
     function getDailyBoundary(now) {
@@ -425,6 +592,20 @@
       return boundary.getTime();
     }
 
+    function getMonthlyBoundary(now) {
+      const boundary = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        MONTHLY_RESET_DAY_OF_MONTH,
+        DAILY_RESET_HOUR, DAILY_RESET_MINUTE, 0, 0
+      );
+      if (now < boundary) {
+        boundary.setMonth(boundary.getMonth() - 1);
+        boundary.setDate(MONTHLY_RESET_DAY_OF_MONTH);
+      }
+      return boundary.getTime();
+    }
+
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -444,24 +625,32 @@
       const now = new Date();
       const dailyBoundary = getDailyBoundary(now);
       const weeklyBoundary = getWeeklyBoundary(now);
+      const monthlyBoundary = getMonthlyBoundary(now);
 
       let state = loadState();
       if (!state) {
-        state = { daily: {}, weekly: {}, dailyBoundary, weeklyBoundary };
+        state = { daily: {}, weekly: {}, monthly: {}, dailyBoundary, weeklyBoundary, monthlyBoundary };
         saveState(state);
         return state;
       }
 
-      // 일일 리셋
+      if (!state.daily) state.daily = {};
+      if (!state.weekly) state.weekly = {};
+      if (!state.monthly) state.monthly = {};
+
       if (!state.dailyBoundary || state.dailyBoundary < dailyBoundary) {
         state.daily = {};
         state.dailyBoundary = dailyBoundary;
       }
 
-      // 주간 리셋
       if (!state.weeklyBoundary || state.weeklyBoundary < weeklyBoundary) {
         state.weekly = {};
         state.weeklyBoundary = weeklyBoundary;
+      }
+
+      if (!state.monthlyBoundary || state.monthlyBoundary < monthlyBoundary) {
+        state.monthly = {};
+        state.monthlyBoundary = monthlyBoundary;
       }
 
       saveState(state);
@@ -475,7 +664,6 @@
         return cb ? cb.checked : false;
       }
       if (kind === "counter") {
-        // 문파: 오늘 6/6이면 완료로 간주
         const completed = rowEl.getAttribute("data-completed");
         return completed === "true";
       }
@@ -503,7 +691,6 @@
         row.classList.toggle("hidden", !visible);
       });
 
-      // 카드 자체 숨김(해당 카드 내 보이는 task-row가 하나도 없으면)
       document.querySelectorAll(".card").forEach(card => {
         const rows = card.querySelectorAll(".task-row[data-freq][data-scope]");
         if (rows.length === 0) return;
@@ -521,64 +708,55 @@
       const safeWeekly = Math.max(0, Math.min(20, weeklyTotal || 0));
 
       if (counterEl) {
-        counterEl.innerHTML =
-          `일일: ${safeDaily} / 6<br><small>주간: ${safeWeekly} / 20</small>`;
+        counterEl.innerHTML = `일일: ${safeDaily} / 6<br><small>주간: ${safeWeekly} / 20</small>`;
       }
-
       if (badgeEl) {
         badgeEl.style.display = (safeWeekly >= 20) ? "inline-block" : "none";
       }
-
       if (munpaRow) {
-        // 오늘 6/6이면 완료 취급
         munpaRow.setAttribute("data-completed", (safeDaily >= 6) ? "true" : "false");
       }
     }
 
     function updateUIFromState(state) {
-      // 체크박스 반영
       document.querySelectorAll('input[type="checkbox"][data-task-id]').forEach(el => {
         const id = el.getAttribute('data-task-id');
+        const isMonthly = id.startsWith("monthly-");
         const isWeekly = id.startsWith("weekly-");
-        const section = isWeekly ? state.weekly : state.daily;
+        const section = isMonthly ? state.monthly : (isWeekly ? state.weekly : state.daily);
         el.checked = !!section[id];
       });
 
-      // 문파 카운터 반영
       const dailyCountRaw = state.daily["daily-munpa"];
       const weeklyTotalRaw = state.weekly["weekly-munpa-total"];
       const dailyCount = (typeof dailyCountRaw === "number" && dailyCountRaw >= 0) ? dailyCountRaw : 0;
       const weeklyTotal = (typeof weeklyTotalRaw === "number" && weeklyTotalRaw >= 0) ? weeklyTotalRaw : 0;
       updateMunpaUI(dailyCount, weeklyTotal);
 
-      // 리셋 라벨
       const dailyLabel = document.getElementById("daily-last-reset");
       const weeklyLabel = document.getElementById("weekly-last-reset");
-      if (dailyLabel && state.dailyBoundary) {
-        dailyLabel.textContent = "마지막 일일 리셋: " + formatDateTime(new Date(state.dailyBoundary));
-      }
-      if (weeklyLabel && state.weeklyBoundary) {
-        weeklyLabel.textContent = "마지막 주간 리셋: " + formatDateTime(new Date(state.weeklyBoundary));
-      }
+      const monthlyLabel = document.getElementById("monthly-last-reset");
 
-      // 필터 재적용
+      if (dailyLabel && state.dailyBoundary) dailyLabel.textContent = "마지막 일일 리셋: " + formatDateTime(new Date(state.dailyBoundary));
+      if (weeklyLabel && state.weeklyBoundary) weeklyLabel.textContent = "마지막 주간 리셋: " + formatDateTime(new Date(state.weeklyBoundary));
+      if (monthlyLabel && state.monthlyBoundary) monthlyLabel.textContent = "마지막 월간 리셋: " + formatDateTime(new Date(state.monthlyBoundary));
+
       applyFilters();
     }
 
     function attachEvents(state) {
-      // 일반 체크박스
       document.querySelectorAll('input[type="checkbox"][data-task-id]').forEach(el => {
         el.addEventListener("change", () => {
           const id = el.getAttribute('data-task-id');
+          const isMonthly = id.startsWith("monthly-");
           const isWeekly = id.startsWith("weekly-");
-          const sectionName = isWeekly ? "weekly" : "daily";
+          const sectionName = isMonthly ? "monthly" : (isWeekly ? "weekly" : "daily");
           state[sectionName][id] = el.checked;
           saveState(state);
           applyFilters();
         });
       });
 
-      // 문파 +1
       const plusBtn = document.getElementById("munpa-plus");
       if (plusBtn) {
         plusBtn.addEventListener("click", () => {
@@ -592,7 +770,6 @@
             applyFilters();
             return;
           }
-
           if (dailyCount < 6) {
             dailyCount += 1;
             weeklyTotal += 1;
@@ -607,7 +784,6 @@
         });
       }
 
-      // 문파 오늘 0(오늘치 0으로, 주간도 오늘만큼 되돌림)
       const resetTodayBtn = document.getElementById("munpa-reset-today");
       if (resetTodayBtn) {
         resetTodayBtn.addEventListener("click", () => {
@@ -627,7 +803,6 @@
         });
       }
 
-      // 솔로 일일 초기화(동맹 일일 포함: 일일 섹션 전체 초기화)
       const dailyResetBtn = document.getElementById("daily-manual-reset");
       if (dailyResetBtn) {
         dailyResetBtn.addEventListener("click", () => {
@@ -638,7 +813,6 @@
         });
       }
 
-      // 주간 모두 초기화(솔로 주간 + 동맹 주간 포함)
       const weeklyResetBtn = document.getElementById("weekly-manual-reset");
       if (weeklyResetBtn) {
         weeklyResetBtn.addEventListener("click", () => {
@@ -649,7 +823,16 @@
         });
       }
 
-      // 검색
+      const monthlyResetBtn = document.getElementById("monthly-manual-reset");
+      if (monthlyResetBtn) {
+        monthlyResetBtn.addEventListener("click", () => {
+          state.monthly = {};
+          state.monthlyBoundary = getMonthlyBoundary(new Date());
+          saveState(state);
+          updateUIFromState(state);
+        });
+      }
+
       const searchInput = document.getElementById("searchInput");
       const clearSearch = document.getElementById("clearSearch");
       if (searchInput) {
@@ -667,7 +850,6 @@
         });
       }
 
-      // 미완료만
       const onlyTodo = document.getElementById("onlyTodo");
       if (onlyTodo) {
         onlyTodo.addEventListener("change", () => {
@@ -676,14 +858,12 @@
         });
       }
 
-      // 칩 필터
       document.querySelectorAll(".chip[data-filter-group][data-filter-value]").forEach(chip => {
         chip.addEventListener("click", () => {
           const group = chip.getAttribute("data-filter-group");
           const value = chip.getAttribute("data-filter-value");
           filters[group] = value;
 
-          // 같은 그룹 칩 aria-pressed 업데이트
           document.querySelectorAll(`.chip[data-filter-group="${group}"]`).forEach(c => {
             c.setAttribute("aria-pressed", (c.getAttribute("data-filter-value") === value) ? "true" : "false");
           });
