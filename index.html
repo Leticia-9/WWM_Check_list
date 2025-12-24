@@ -145,6 +145,7 @@
     .right-tools { display:flex; gap: 8px; align-items:center; }
     .muted { color: #777; font-size: 12px; }
     .hidden { display: none !important; }
+    .ui-hidden { display: none !important; }
   </style>
 </head>
 
@@ -182,6 +183,10 @@
     <h2>
       <span>솔로 일일</span>
       <span class="right-tools">
+        <label class="toggle" style="margin:0;">
+          <input type="checkbox" id="showHairTask" />
+          머리 빗기
+        </label>
         <span class="badge" id="munpa-weekly-badge" style="display:none;">문파 주간 캡</span>
       </span>
     </h2>
@@ -208,6 +213,13 @@
         </div>
         <div id="daily-munpa-counter"></div>
       </div>
+    </div>
+
+    <div class="task-row" id="hair-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="머리 빗기 2번">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="daily-hair">
+        머리 빗기 2번
+      </label>
     </div>
 
     <div class="task-row" data-freq="daily" data-scope="solo" data-kind="check" data-search="거위 치료">
@@ -351,28 +363,7 @@
     <h2><span>솔로 주간 - 교환/상점</span></h2>
     <div class="card-note">주간(월요일 06:00) 기준 교환/상점 목록</div>
 
-    <!-- (기존 솔로 주간에 있던 항목들) -->
-    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="상점 아이템 음의 선율 2개">
-      <label class="task-label">
-        <input type="checkbox" data-task-id="weekly-shop-sound2">
-        상점 - 아이템 - 음의 선율 2개 구매
-      </label>
-    </div>
-
-    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="시즌 상점 외관 교환 음의 선율 1개">
-      <label class="task-label">
-        <input type="checkbox" data-task-id="weekly-season-sound1">
-        시즌 상점 - 외관 교환 - 음의 선율 1개 구매
-      </label>
-    </div>
-
-    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="옥어패 2만 사용">
-      <label class="task-label">
-        <input type="checkbox" data-task-id="weekly-oyuopae">
-        시즌 상점 - 옥어패 2만 개 사용
-      </label>
-    </div>
-
+    <!-- 우선순위/활동성 항목 -->
     <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="협경 일반">
       <label class="task-label">
         <input type="checkbox" data-task-id="weekly-hyeopgyeong">
@@ -387,7 +378,37 @@
       </label>
     </div>
 
-    <!-- (기존 솔로 주간 - 교환/상점 목록) -->
+    <!-- 추가: 말 판매 -->
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="말 5마리 판매">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-horse-sell5">
+        말 5마리 판매
+      </label>
+    </div>
+
+    <!-- 구매/사용(표시용) -->
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="상점 아이템 음의 선율 2개">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-shop-sound2">
+        상점 - 아이템 - 음의 선율 2개 구매
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="옥어패 2만 사용">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-oyuopae">
+        시즌 상점 - 옥어패 2만 개 사용
+      </label>
+    </div>
+
+    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="시즌 상점 외관 교환 음의 선율 1개">
+      <label class="task-label">
+        <input type="checkbox" data-task-id="weekly-season-sound1">
+        시즌 상점 - 외관 교환 - 음의 선율 1개 구매
+      </label>
+    </div>
+
+    <!-- 교환/상점 상세(재화/위치 포함) -->
     <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="강호백진 음의 선율 장명옥">
       <div>
         <label class="task-label">
@@ -438,16 +459,6 @@
       </div>
     </div>
 
-    <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="강호령 상점 비결 돌파 지원상자 강호령패">
-      <div>
-        <label class="task-label">
-          <input type="checkbox" data-task-id="weekly-ganghoryeong-bigeolbox3">
-          강호령 상점 - 비결 돌파 지원상자 교환 3개
-        </label>
-        <small>재화: 강호령패 15개 · 위치: 강호령 &gt; 상점 &gt; 비결돌파 상자</small>
-      </div>
-    </div>
-
     <div class="task-row" data-freq="weekly" data-scope="solo" data-kind="check" data-search="장비 상점 장비 상자 옥어패">
       <div>
         <label class="task-label">
@@ -488,6 +499,7 @@
       </div>
     </div>
   </div>
+
 
   <!-- 5) 솔로 월간 - 교환/상점 -->
   <div class="card" data-card="solo-monthly-exchange">
@@ -537,6 +549,38 @@
       onlyTodo: false,
       query: ""
     };
+
+    const UI_KEY = "yunyun-checklist-ui-v1";
+
+    function loadUIPrefs() {
+      try {
+        const raw = localStorage.getItem(UI_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        console.error("ui load error", e);
+        return null;
+      }
+    }
+
+    function saveUIPrefs(prefs) {
+      try {
+        localStorage.setItem(UI_KEY, JSON.stringify(prefs));
+      } catch (e) {
+        console.error("ui save error", e);
+      }
+    }
+
+    let uiPrefs = loadUIPrefs();
+    if (!uiPrefs) uiPrefs = { showHairTask: true };
+
+    function applyUIPreferences() {
+      const toggle = document.getElementById("showHairTask");
+      if (toggle) toggle.checked = !!uiPrefs.showHairTask;
+
+      const hairRow = document.getElementById("hair-row");
+      if (hairRow) hairRow.classList.toggle("ui-hidden", !uiPrefs.showHairTask);
+    }
 
     function pad2(n){ return String(n).padStart(2, "0"); }
 
@@ -685,7 +729,7 @@
       document.querySelectorAll(".card").forEach(card => {
         const rows = card.querySelectorAll(".task-row[data-freq][data-scope]");
         if (rows.length === 0) return;
-        const anyVisible = Array.from(rows).some(r => !r.classList.contains("hidden"));
+        const anyVisible = Array.from(rows).some(r => !r.classList.contains("hidden") && !r.classList.contains("ui-hidden"));
         card.classList.toggle("hidden", !anyVisible);
       });
     }
@@ -849,6 +893,17 @@
         });
       }
 
+      // 머리 빗기 표시 토글(개별 브라우저 저장)
+      const showHairTask = document.getElementById("showHairTask");
+      if (showHairTask) {
+        showHairTask.addEventListener("change", () => {
+          uiPrefs.showHairTask = !!showHairTask.checked;
+          saveUIPrefs(uiPrefs);
+          applyUIPreferences();
+          applyFilters();
+        });
+      }
+
       document.querySelectorAll(".chip[data-filter-group][data-filter-value]").forEach(chip => {
         chip.addEventListener("click", () => {
           const group = chip.getAttribute("data-filter-group");
@@ -874,6 +929,7 @@
     (function main() {
       setSubtitle();
       const state = initStateIfNeeded();
+      applyUIPreferences();
       updateUIFromState(state);
       attachEvents(state);
       updateNowTime();
