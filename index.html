@@ -129,6 +129,7 @@
       gap: 10px;
     }
     .time-info { font-size: 12px; color: #777; margin-top: 6px; }
+    .footer-credit { font-size: 12px; color: #777; text-align: center; margin-top: 10px; }
 
     /* 문파 전용 */
     #daily-munpa-counter { font-size: 14px; text-align: right; line-height: 1.4; min-width: 150px; }
@@ -152,6 +153,18 @@
 <body>
   <h1>연운 일일 / 주간 / 월간 체크리스트</h1>
   <div class="subtitle" id="reset-subtitle"></div>
+  <div class="subtitle muted" style="margin-top:-4px;">
+    ※ 체크 상태는 각자 브라우저에만 저장됩니다.
+  </div>
+  <div class="subtitle muted" style="margin-top:-6px;">
+    · 동맹원들이 놓치기 쉬운 일일/주간/월간 정리를 돕기 위한 참고용 체크리스트입니다.
+  </div>
+  <div class="subtitle muted" style="margin-top:-6px;">
+    · 문의·수정 제안은 동맹 디스코드의 <strong>문의/건의 게시판</strong>을 통해 부탁드립니다.
+  </div>
+  <div class="subtitle muted" style="margin-top:-6px;">
+   · 제작·정리: 려한
+  </div>
 
   <div class="topbar">
     <div class="search">
@@ -535,6 +548,7 @@
   </div>
 
   <div class="time-info" id="now-time"></div>
+  <div class="footer-credit">Checklist by 려한</div>
 
   <script>
     const STORAGE_KEY = "yunyun-checklist-state-v4"; // 기존 진행도 유지
