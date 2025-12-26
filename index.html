@@ -765,7 +765,10 @@
         badgeEl.style.display = (safeWeekly >= 20) ? "inline-block" : "none";
       }
       if (munpaRow) {
-        munpaRow.setAttribute("data-completed", (safeDaily >= 6) ? "true" : "false");
+        const isCompleted = (safeWeekly >= 20) || (safeDaily >= 6);
+        munpaRow.setAttribute("data-completed", isCompleted ? "true" : "false");
+        // 주간 20회 캡을 채우면(주간이 우선) 문파 일일 카운터는 숨김 처리
+        munpaRow.classList.toggle("ui-hidden", (safeWeekly >= 20));
       }
     }
 
